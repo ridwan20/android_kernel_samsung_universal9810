@@ -132,7 +132,6 @@ designed for this purpose be used, such as scrypt, PBKDF2, or Argon2.
 Per-file keys
 -------------
 
-<<<<<<< HEAD
 Since each master key can protect many files, it is necessary to
 "tweak" the encryption of each file so that the same plaintext in two
 files doesn't map to the same ciphertext, or vice versa.  In most
@@ -155,49 +154,6 @@ The current KDF works by encrypting the master key with AES-128-ECB,
 using the file's nonce as the AES key.  The output is used as the
 derived key.  If the output is longer than needed, then it is
 truncated to the needed length.
-=======
-Master keys are not used to encrypt file contents or names directly.
-Instead, a unique key is derived for each encrypted file, including
-each regular file, directory, and symbolic link.  This has several
-advantages:
-
-- In cryptosystems, the same key material should never be used for
-  different purposes.  Using the master key as both an XTS key for
-  contents encryption and as a CTS-CBC key for filenames encryption
-  would violate this rule.
-- Per-file keys simplify the choice of IVs (Initialization Vectors)
-  for contents encryption.  Without per-file keys, to ensure IV
-  uniqueness both the inode and logical block number would need to be
-  encoded in the IVs.  This would make it impossible to renumber
-  inodes, which e.g. ``resize2fs`` can do when resizing an ext4
-  filesystem.  With per-file keys, it is sufficient to encode just the
-  logical block number in the IVs.
-- Per-file keys strengthen the encryption of filenames, where IVs are
-  reused out of necessity.  With a unique key per directory, IV reuse
-  is limited to within a single directory.
-- Per-file keys allow individual files to be securely erased simply by
-  securely erasing their keys.  (Not yet implemented.)
-
-A KDF (Key Derivation Function) is used to derive per-file keys from
-the master key.  This is done instead of wrapping a randomly-generated
-key for each file because it reduces the size of the encryption xattr,
-which for some filesystems makes the xattr more likely to fit in-line
-in the filesystem's inode table.  With a KDF, only a 16-byte nonce is
-required --- long enough to make key reuse extremely unlikely.  A
-wrapped key, on the other hand, would need to be up to 64 bytes ---
-the length of an AES-256-XTS key.  Furthermore, currently there is no
-requirement to support unlocking a file with multiple alternative
-master keys or to support rotating master keys.  Instead, the master
-keys may be wrapped in userspace, e.g. as done by the `fscrypt
-<https://github.com/google/fscrypt>`_ tool.
-
-The current KDF encrypts the master key using the 16-byte nonce as an
-AES-128-ECB key.  The output is used as the derived key.  If the
-output is longer than needed, then it is truncated to the needed
-length.  Truncation is the norm for directories and symlinks, since
-those use the CTS-CBC encryption mode which requires a key half as
-long as that required by the XTS encryption mode.
->>>>>>> 018a812b324a... Merge remote-tracking branch 'origin/upstream-f2fs-stable-linux-4.9.y' into android-4.9
 
 Note: this KDF meets the primary security requirement, which is to
 produce unique derived keys that preserve the entropy of the master
@@ -206,7 +162,6 @@ However, it is nonstandard and has some problems such as being
 reversible, so it is generally considered to be a mistake!  It may be
 replaced with HKDF or another more standard KDF in the future.
 
-<<<<<<< HEAD
 Key derivation was chosen over key wrapping because wrapped keys would
 require larger xattrs which would be less likely to fit in-line in the
 filesystem's inode table, and there didn't appear to be any
@@ -221,8 +176,6 @@ rejected as it would have prevented ext4 filesystems from being
 resized, and by itself still wouldn't have been sufficient to prevent
 the same key from being directly reused for both XTS and CTS-CBC.
 
-=======
->>>>>>> 018a812b324a... Merge remote-tracking branch 'origin/upstream-f2fs-stable-linux-4.9.y' into android-4.9
 Encryption modes and usage
 ==========================
 
@@ -233,7 +186,6 @@ Currently, the following pairs of encryption modes are supported:
 
 - AES-256-XTS for contents and AES-256-CTS-CBC for filenames
 - AES-128-CBC for contents and AES-128-CTS-CBC for filenames
-<<<<<<< HEAD
 - Adiantum for both contents and filenames
 
 If unsure, you should use the (AES-256-XTS, AES-256-CTS-CBC) pair.
@@ -251,29 +203,12 @@ XChaCha12 and AES-256, rather than just one.  See the paper
 Adiantum, CONFIG_CRYPTO_ADIANTUM must be enabled.  Also, fast
 implementations of ChaCha and NHPoly1305 should be enabled, e.g.
 CONFIG_CRYPTO_CHACHA20_NEON and CONFIG_CRYPTO_NHPOLY1305_NEON for ARM.
-=======
-- Speck128/256-XTS for contents and Speck128/256-CTS-CBC for filenames
-
-It is strongly recommended to use AES-256-XTS for contents encryption.
-AES-128-CBC was added only for low-powered embedded devices with
-crypto accelerators such as CAAM or CESA that do not support XTS.
-
-Similarly, Speck128/256 support was only added for older or low-end
-CPUs which cannot do AES fast enough -- especially ARM CPUs which have
-NEON instructions but not the Cryptography Extensions -- and for which
-it would not otherwise be feasible to use encryption at all.  It is
-not recommended to use Speck on CPUs that have AES instructions.
-Speck support is only available if it has been enabled in the crypto
-API via CONFIG_CRYPTO_SPECK.  Also, on ARM platforms, to get
-acceptable performance CONFIG_CRYPTO_SPECK_NEON must be enabled.
->>>>>>> 018a812b324a... Merge remote-tracking branch 'origin/upstream-f2fs-stable-linux-4.9.y' into android-4.9
 
 New encryption modes can be added relatively easily, without changes
 to individual filesystems.  However, authenticated encryption (AE)
 modes are not currently supported because of the difficulty of dealing
 with ciphertext expansion.
 
-<<<<<<< HEAD
 Contents encryption
 -------------------
 
@@ -325,46 +260,6 @@ produce duplicate plaintexts.
 Symbolic link targets are considered a type of filename and are
 encrypted in the same way as filenames in directory entries, except
 that IV reuse is not a problem as each symlink has its own inode.
-=======
-For file contents, each filesystem block is encrypted independently.
-Currently, only the case where the filesystem block size is equal to
-the system's page size (usually 4096 bytes) is supported.  With the
-XTS mode of operation (recommended), the logical block number within
-the file is used as the IV.  With the CBC mode of operation (not
-recommended), ESSIV is used; specifically, the IV for CBC is the
-logical block number encrypted with AES-256, where the AES-256 key is
-the SHA-256 hash of the inode's data encryption key.
-
-For filenames, the full filename is encrypted at once.  Because of the
-requirements to retain support for efficient directory lookups and
-filenames of up to 255 bytes, a constant initialization vector (IV) is
-used.  However, each encrypted directory uses a unique key, which
-limits IV reuse to within a single directory.  Note that IV reuse in
-the context of CTS-CBC encryption means that when the original
-filenames share a common prefix at least as long as the cipher block
-size (16 bytes for AES), the corresponding encrypted filenames will
-also share a common prefix.  This is undesirable; it may be fixed in
-the future by switching to an encryption mode that is a strong
-pseudorandom permutation on arbitrary-length messages, e.g. the HEH
-(Hash-Encrypt-Hash) mode.
-
-Since filenames are encrypted with the CTS-CBC mode of operation, the
-plaintext and ciphertext filenames need not be multiples of the AES
-block size, i.e. 16 bytes.  However, the minimum size that can be
-encrypted is 16 bytes, so shorter filenames are NUL-padded to 16 bytes
-before being encrypted.  In addition, to reduce leakage of filename
-lengths via their ciphertexts, all filenames are NUL-padded to the
-next 4, 8, 16, or 32-byte boundary (configurable).  32 is recommended
-since this provides the best confidentiality, at the cost of making
-directory entries consume slightly more space.  Note that since NUL
-(``\0``) is not otherwise a valid character in filenames, the padding
-will never produce duplicate plaintexts.
-
-Symbolic link targets are considered a type of filename and are
-encrypted in the same way as filenames in directory entries.  Each
-symlink also uses a unique key; hence, the hardcoded IV is not a
-problem for symlinks.
->>>>>>> 018a812b324a... Merge remote-tracking branch 'origin/upstream-f2fs-stable-linux-4.9.y' into android-4.9
 
 User API
 ========
@@ -398,7 +293,6 @@ This structure must be initialized as follows:
   and FS_ENCRYPTION_MODE_AES_256_CTS (4) for
   ``filenames_encryption_mode``.
 
-<<<<<<< HEAD
 - ``flags`` must contain a value from ``<linux/fs.h>`` which
   identifies the amount of NUL-padding to use when encrypting
   filenames.  If unsure, use FS_POLICY_FLAGS_PAD_32 (0x3).
@@ -406,11 +300,6 @@ This structure must be initialized as follows:
   FS_ENCRYPTION_MODE_ADIANTUM, this can contain
   FS_POLICY_FLAG_DIRECT_KEY to specify that the master key should be
   used directly, without key derivation.
-=======
-- ``flags`` must be set to a value from ``<linux/fs.h>`` which
-  identifies the amount of NUL-padding to use when encrypting
-  filenames.  If unsure, use FS_POLICY_FLAGS_PAD_32 (0x3).
->>>>>>> 018a812b324a... Merge remote-tracking branch 'origin/upstream-f2fs-stable-linux-4.9.y' into android-4.9
 
 - ``master_key_descriptor`` specifies how to find the master key in
   the keyring; see `Adding keys`_.  It is up to userspace to choose a
