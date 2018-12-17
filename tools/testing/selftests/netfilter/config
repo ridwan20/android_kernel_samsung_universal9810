@@ -1,2 +1,6 @@
 CONFIG_NET_NS=y
+<<<<<<< HEAD
 CONFIG_NF_TABLES_INET=y
+=======
+NF_TABLES_INET=y
+>>>>>>> ea073b78a1a6... Merge 4.9.146 into android-4.9
