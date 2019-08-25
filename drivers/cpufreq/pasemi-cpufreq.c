@@ -145,10 +145,18 @@ static int pas_cpufreq_cpu_init(struct cpufreq_policy *policy)
 	int err = -ENODEV;
 
 	cpu = of_get_cpu_node(policy->cpu, NULL);
-	
-	of_node_put(cpu);
 	if (!cpu)
 		goto out;
+
+	max_freqp = of_get_property(cpu, "clock-frequency", NULL);
+	of_node_put(cpu);
+	if (!max_freqp) {
+		err = -EINVAL;
+		goto out;
+	}
+
+	/* we need the freq in kHz */
+	max_freq = *max_freqp / 1000;
 
 	max_freqp = of_get_property(cpu, "clock-frequency", NULL);
 	of_node_put(cpu);
