@@ -1432,8 +1432,9 @@ int xhci_bus_suspend(struct usb_hcd *hcd)
 			t2 &= ~PORT_WAKE_BITS;
 
 		t1 = xhci_port_state_to_neutral(t1);
-		if (t1 != t2) {
-			}
+		if (t1 != t2)
+			portsc_buf[port_index] = t2;
+	}
 
 	/* write port settings, stopping and suspending ports if needed */
 	port_index = max_ports;
@@ -1452,7 +1453,6 @@ int xhci_bus_suspend(struct usb_hcd *hcd)
 			}
 		}
 		writel(portsc_buf[port_index], port_array[port_index]);
-		}
 	}
 
 	if (is_port_connect && usb_hcd_is_primary_hcd(hcd)) {
