@@ -278,7 +278,7 @@ static unsigned int get_next_freq(struct sugov_policy *sg_policy,
 	goto done;
 
 out:
-	freq = freqvar_tipping_point(policy->cpu, freq) * util / max;
+	freq = freqvar_tipping_point(policy->cpu, freq) * int_sqrt(util * 100 / max) / 10;
 
 done:
 	if (freq == sg_policy->cached_raw_freq && sg_policy->next_freq != UINT_MAX)
