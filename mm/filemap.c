@@ -35,6 +35,7 @@
 #include <linux/memcontrol.h>
 #include <linux/cleancache.h>
 #include <linux/rmap.h>
+#include <linux/delayacct.h>
 #include "internal.h"
 
 #ifdef CONFIG_SDP
@@ -43,6 +44,12 @@
 #ifdef CONFIG_FSCRYPT_SDP
 #include <linux/fscrypto_sdp_cache.h>
 #endif
+
+#ifdef CONFIG_PAGE_BOOST_RECORDING
+#include <linux/io_record.h>
+#endif
+
+
 #define CREATE_TRACE_POINTS
 #include <trace/events/filemap.h>
 
@@ -1722,6 +1729,9 @@ static ssize_t do_generic_file_read(struct file *filp, loff_t *ppos,
 	prev_offset = ra->prev_pos & (PAGE_SIZE-1);
 	last_index = (*ppos + iter->count + PAGE_SIZE-1) >> PAGE_SHIFT;
 	offset = *ppos & ~PAGE_MASK;
+#ifdef CONFIG_PAGE_BOOST_RECORDING
+	record_io_info(filp, index, last_index - index);
+#endif
 
 	for (;;) {
 		struct page *page;
@@ -2355,6 +2365,11 @@ next:
 			break;
 	}
 	rcu_read_unlock();
+
+#ifdef CONFIG_PAGE_BOOST_RECORDING
+	/* end_pgoff is inclusive */
+	record_io_info(file, start_pgoff, last_pgoff - start_pgoff + 1);
+#endif
 }
 EXPORT_SYMBOL(filemap_map_pages);
 
