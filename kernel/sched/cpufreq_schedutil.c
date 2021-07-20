@@ -18,6 +18,8 @@
 
 #include <trace/events/power.h>
 
+#include <soc/samsung/exynos-cpu_hotplug.h>
+
 #include "sched.h"
 #include "tune.h"
 
@@ -261,14 +263,24 @@ static unsigned int get_next_freq(struct sugov_policy *sg_policy,
 	struct cpufreq_policy *policy = sg_policy->policy;
 	unsigned int freq = arch_scale_freq_invariant() ?
 				policy->max : policy->cur;
-				
-	unsigned int cap_util = sugov_find_cap_power_limit(sg_policy, max);
+	unsigned int cap_util;
+	
+	if(exynos_cpu_hotplug_gov_enabled())
+		goto out;
+
+	cap_util = sugov_find_cap_power_limit(sg_policy, max);
 
 	if (cap_util > util)
-		freq = freqvar_tipping_point(policy->cpu, freq) * util / max;
+		goto out;
 	else 
 		freq = freq * cap_util / max;
+	
+	goto done;
 
+out:
+	freq = freqvar_tipping_point(policy->cpu, freq) * util / max;
+
+done:
 	if (freq == sg_policy->cached_raw_freq && sg_policy->next_freq != UINT_MAX)
 		return sg_policy->next_freq;
 	sg_policy->cached_raw_freq = freq;
