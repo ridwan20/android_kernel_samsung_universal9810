@@ -171,6 +171,11 @@ void exynos_hpgov_validate_hpin(unsigned int cpu)
 	return;
 }
 
+bool exynos_cpu_hotplug_gov_enabled(void)
+{
+	return exynos_hpgov.enabled;
+}
+
 /**********************************************************************************/
 /*			CPUFREQ for max frequency control			  */
 /**********************************************************************************/
