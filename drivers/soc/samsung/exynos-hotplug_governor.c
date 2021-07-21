@@ -72,6 +72,7 @@ struct hpgov_load {
 
 struct {
 	int				enabled;
+	bool			boot_done;
 	int				suspend;
 	unsigned int			cur_cpu_min;
 	unsigned int			req_cpu_min;
@@ -185,7 +186,9 @@ static unsigned long get_hpgov_maxfreq(void)
 {
 	unsigned long max_freq;
 
-	if (!exynos_hpgov.enabled || exynos_hpgov.suspend)
+	if (!exynos_hpgov.enabled && exynos_hpgov.boot_done)
+		max_freq = exynos_hpgov.maxfreq_table[DISABLE];
+	else if (!exynos_hpgov.enabled || exynos_hpgov.suspend)
 		max_freq = exynos_hpgov.maxfreq_table[QUAD];
 	else if (cpumask_weight(&exynos_hpgov.big_cpu_mask) == SINGLE)
 		max_freq = exynos_hpgov.maxfreq_table[SINGLE];
@@ -820,10 +823,13 @@ exit:
 /**********************************************************************************/
 static int exynos_hpgov_set_enabled(int val)
 {
-	if (val > 0)
-		return exynos_hpgov_set_enable(true);
-	else
-		return exynos_hpgov_set_enable(false);
+	if (val > 0) {
+		exynos_hpgov_set_enable(true);
+	} else {
+		exynos_hpgov.user_mode = DISABLE;
+		exynos_hpgov.mode = DISABLE;
+		exynos_hpgov_set_enable(false);
+	}
 
 	return 0;
 }
@@ -1035,6 +1041,7 @@ static DECLARE_DELAYED_WORK(hpgov_boot_work, hpgov_boot_enable);
 static void hpgov_boot_enable(struct work_struct *work)
 {
 	exynos_hpgov_set_enable(true);
+	exynos_hpgov.boot_done = 1;
 }
 
 static int exynos_hp_gov_pm_suspend_notifier(struct notifier_block *notifier,
@@ -1151,7 +1158,7 @@ static int __init exynos_hpgov_parse_dt(void)
 		goto exit;
 	exynos_hpgov.maxfreq_table[QUAD] = min(freq, max_freq);
 
-	exynos_hpgov.maxfreq_table[DISABLE] = exynos_hpgov.maxfreq_table[QUAD];
+	exynos_hpgov.maxfreq_table[DISABLE] = exynos_hpgov.maxfreq_table[SINGLE];
 
 	for (i = 0; i <= QUAD; i++)
 		pr_info("HP_GOV: mode %d: max_freq = %d\n",
@@ -1243,6 +1250,7 @@ static int __init exynos_hpgov_init(void)
 	exynos_hpgov.pol_max = ULONG_MAX;
 	exynos_hpgov.qos_max = ULONG_MAX;
 	exynos_hpgov.enabled = 0;
+	exynos_hpgov.boot_done = 0;
 	exynos_hpgov.mode = QUAD;
 	exynos_hpgov.user_mode = DISABLE;
 	exynos_hpgov.boostable = true;
