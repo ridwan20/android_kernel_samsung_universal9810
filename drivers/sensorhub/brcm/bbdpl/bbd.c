@@ -147,7 +147,7 @@ static unsigned char bbd_patch[] = {
 #endif
 #elif defined(CONFIG_SENSORS_SSP_HAECHI)
 #if ANDROID_VERSION < 90000
-#include "bbd_patch_file_haechi.h"
+#include "o_os/bbd_patch_file_haechi.h"
 #elif ANDROID_VERSION < 100000
 #include "p_os/bbd_patch_file_haechi.h"
 #else
