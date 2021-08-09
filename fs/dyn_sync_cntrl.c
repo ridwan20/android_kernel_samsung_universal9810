@@ -23,9 +23,7 @@
 #include <linux/notifier.h>
 #include <linux/reboot.h>
 #include <linux/writeback.h>
-
-#define DYN_FSYNC_VERSION_MAJOR 1
-#define DYN_FSYNC_VERSION_MINOR 5
+#include <linux/dyn_sync_cntrl.h>
 
 /*
  * fsync_mutex protects dyn_fsync_active during power suspend / late resume
@@ -34,7 +32,7 @@
 static DEFINE_MUTEX(fsync_mutex);
 
 bool power_suspend_active __read_mostly = false;
-bool dyn_fsync_active __read_mostly = true;
+bool dyn_fsync_active __read_mostly = DYN_FSYNC_ACTIVE_DEFAULT;
 
 static ssize_t dyn_fsync_active_show(struct kobject *kobj,
 		struct kobj_attribute *attr, char *buf)

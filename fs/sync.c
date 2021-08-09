@@ -19,8 +19,7 @@
 #include "internal.h"
 
 #ifdef CONFIG_DYNAMIC_FSYNC
-extern bool power_suspend_active;
-extern bool dyn_fsync_active;
+#include <linux/dyn_sync_cntrl.h>
 #endif
 
 bool fsync_enabled = true;
