@@ -94,10 +94,7 @@ ip6frag_expire_frag_queue(struct net *net, struct frag_queue *fq)
 		goto out;
 
 	head->dev = dev;
-<<<<<<< HEAD
-=======
 	skb_get(head);
->>>>>>> 8f3e49fd5a92... Merge 4.9.172 into android-4.9-q
 	spin_unlock(&fq->q.lock);
 
 	icmpv6_send(head, ICMPV6_TIME_EXCEED, ICMPV6_EXC_FRAGTIME, 0);
