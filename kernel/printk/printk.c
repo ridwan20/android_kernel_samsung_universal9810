@@ -603,7 +603,8 @@ void register_hook_logbuf(void (*func)(const char *buf, size_t size))
 		step_idx = log_first_idx;
 		for (step_seq = start; step_seq < end; step_seq++) {
 			msg = (struct printk_log *)(log_buf + step_idx);
-			hook_size = msg_print_text(msg, true, hook_text, LOG_LINE_MAX + PREFIX_MAX);
+			hook_size = msg_print_text(msg, msg->flags,
+					true, hook_text, LOG_LINE_MAX + PREFIX_MAX);
 			func(hook_text, hook_size);
 			step_idx = log_next(step_idx);
 		}
@@ -711,7 +712,8 @@ static int log_store(int facility, int level,
 #endif
 #ifdef CONFIG_EXYNOS_SNAPSHOT
 	if (func_hook_logbuf) {
-		hook_size = msg_print_text(msg, true, hook_text, LOG_LINE_MAX + PREFIX_MAX);
+		hook_size = msg_print_text(msg, msg->flags,
+				true, hook_text, LOG_LINE_MAX + PREFIX_MAX);
 		func_hook_logbuf(hook_text, hook_size);
 
 #ifdef CONFIG_SEC_DEBUG_AUTO_SUMMARY
