@@ -14,6 +14,22 @@
 #include <linux/mm.h>
 #include <linux/highmem.h>
 #include <linux/pagemap.h>
+#include <linux/ptrace.h>/*
+ * linux/kernel/ptrace.c
+ *
+ * (C) Copyright 1999 Linus Torvalds
+ *
+ * Common interfaces for "ptrace()" which we do not want
+ * to continually duplicate across every architecture.
+ */
+
+#include <linux/capability.h>
+#include <linux/export.h>
+#include <linux/sched.h>
+#include <linux/errno.h>
+#include <linux/mm.h>
+#include <linux/highmem.h>
+#include <linux/pagemap.h>
 #include <linux/ptrace.h>
 #include <linux/security.h>
 #include <linux/signal.h>
