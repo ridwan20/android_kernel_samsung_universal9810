@@ -15,6 +15,7 @@ scripts/dtbtool_exynos/dtbtool
 arch/arm64/boot/dts/exynos/*dtb*
 arch/arm64/kernel/vdso32/vdso.lds
 arch/arm64/kernel/vdso32/vdso.so.raw
+scripts/fmp/__pycache__
 
 #
 # Gator
