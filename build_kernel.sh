@@ -1,7 +1,7 @@
 #!/bin/bash
-export CROSS_COMPILE=/home/$USER/Android/Toolchains/aarch64-cruel-elf/bin/aarch64-cruel-elf-
-export CROSS_COMPILE_ARM32=/home/$USER/Android/Toolchains/arm-xxmustafacooTR-eabi/bin/arm-xxmustafacooTR-eabi-
-export CC=/home/$USER/Android/Toolchains/proton-clang/bin/clang
+export CROSS_COMPILE=/home/$USER/Android/Toolchains/aarch64-elf/bin/aarch64-elf-
+export CROSS_COMPILE_ARM32=/home/$USER/Android/Toolchains/arm-eabi/bin/arm-eabi-
+export CC=/home/$USER/Android/Toolchains/clang/bin/clang
 
 ZIP_DIR="/home/$USER/Android/Kernel/Zip/"
 ZIP_ALT_DIR="/home/$USER/Android/Kernel/Zip_Alt/"
