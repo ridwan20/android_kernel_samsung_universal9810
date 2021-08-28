@@ -2495,7 +2495,8 @@ SYSCALL_DEFINE2(swapon, const char __user *, specialfile, int, swap_flags)
 		 */
 		p->cluster_next = 1 + (prandom_u32() % p->highest_bit);
 
-		cluster_info = vzalloc(array_size(sizeof(*cluster_info));
+		cluster_info = vzalloc(DIV_ROUND_UP(maxpages,
+			SWAPFILE_CLUSTER) * sizeof(*cluster_info));
 		if (!cluster_info) {
 			error = -ENOMEM;
 			goto bad_swap;
