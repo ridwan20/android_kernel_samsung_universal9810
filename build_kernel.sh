@@ -8,8 +8,10 @@ ZIP_DIR="/home/$USER/Android/Kernel/Zip/"
 ZIP_ALT_DIR="/home/$USER/Android/Kernel/Zip_Alt/"
 CUR_DIR=$PWD
 
-export ANDROID_MAJOR_VERSION=r
 export ARCH=arm64
+export PLATFORM_VERSION=11
+export ANDROID_MAJOR_VERSION=s
+export CONFIG_SECTION_MISMATCH_WARN_ONLY=y
 
 function clean {
 		printf "Cleaning\n"
