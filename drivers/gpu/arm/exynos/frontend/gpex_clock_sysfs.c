@@ -25,6 +25,7 @@
 #include <gpex_clboost.h>
 
 #include <linux/throttle_limit.h>
+#include <linux/gaming_control.h>
 
 #include "gpex_clock_internal.h"
 
@@ -172,7 +173,7 @@ GPEX_STATIC ssize_t set_max_lock_dvfs(const char *buf, size_t count)
 			return -ENOENT;
 		}
 
-		if (clock == gpex_clock_get_max_clock())
+		if (clock == gpex_clock_get_max_clock() && !gaming_mode)
 			gpex_clock_lock_clock(GPU_CLOCK_MAX_UNLOCK, SYSFS_LOCK, 0);
 		else
 			gpex_clock_lock_clock(GPU_CLOCK_MAX_LOCK, SYSFS_LOCK, clock);
