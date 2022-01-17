@@ -148,7 +148,7 @@ GPEX_STATIC ssize_t set_max_lock_dvfs(const char *buf, size_t count)
 {
 	int ret, clock = 0;
 
-	if (sysfs_streq("0", buf)) {
+	if (sysfs_streq("0", buf) && !gaming_mode) {
 		clk_info->user_max_lock_input = 0;
 		gpex_clock_lock_clock(GPU_CLOCK_MAX_UNLOCK, SYSFS_LOCK, 0);
 	} else {
@@ -245,7 +245,7 @@ GPEX_STATIC ssize_t set_min_lock_dvfs(const char *buf, size_t count)
 {
 	int ret, clock = 0;
 
-	if (sysfs_streq("0", buf)) {
+	if (sysfs_streq("0", buf) && !gaming_mode) {
 		clk_info->user_min_lock_input = 0;
 		gpex_clock_lock_clock(GPU_CLOCK_MIN_UNLOCK, SYSFS_LOCK, 0);
 	} else {
@@ -270,7 +270,7 @@ GPEX_STATIC ssize_t set_min_lock_dvfs(const char *buf, size_t count)
 		if (clock > gpex_clock_get_max_clock_limit())
 			clock = gpex_clock_get_max_clock_limit();
 
-		if (clock == gpex_clock_get_min_clock())
+		if (clock == gpex_clock_get_min_clock() && !gaming_mode)
 			gpex_clock_lock_clock(GPU_CLOCK_MIN_UNLOCK, SYSFS_LOCK, 0);
 		else
 			gpex_clock_lock_clock(GPU_CLOCK_MIN_LOCK, SYSFS_LOCK, clock);

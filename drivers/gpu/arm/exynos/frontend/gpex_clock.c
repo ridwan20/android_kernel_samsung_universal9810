@@ -51,6 +51,9 @@ int gpu_max_clock_custom = 0;
 int gpu_custom_max_clock(int gpu_max_clock)
 {
 	gpu_max_clock_custom = gpu_max_clock;
+	
+	gpex_clock_set(gpu_max_clock_custom);
+	
 	return gpu_max_clock_custom;
 }
 
