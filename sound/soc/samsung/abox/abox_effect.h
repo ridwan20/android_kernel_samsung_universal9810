@@ -156,7 +156,14 @@ enum {
 #define UPSCALER_VALUE_MIN	(0)
 #define UPSCALER_VALUE_MAX	(2)
 
-#define ABOX_EFFECT_MAX_REGISTERS	(0xB00)
+#define DA_DATA_BASE		(0xB00)
+#define DA_DATA_CHANGE_BIT	(0xB00)
+#define DA_DATA			(0xB10)
+#define DA_DATA_MAX_COUNT	(3)
+#define DA_DATA_VALUE_MIN	(-1)
+#define DA_DATA_VALUE_MAX	(15)
+
+#define ABOX_EFFECT_MAX_REGISTERS	(0xB50)
 
 #define PARAM_OFFSET		(0x10)
 #define CHANGE_BIT		(1)

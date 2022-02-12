@@ -72,6 +72,7 @@ enum power_supply_ext_property {
 	POWER_SUPPLY_EXT_PROP_JIG_GPIO,
 	POWER_SUPPLY_EXT_PROP_WPC_EN,
 	POWER_SUPPLY_EXT_PROP_WPC_EN_MST,
+	POWER_SUPPLY_EXT_PROP_TTF_FULL_CAPACITY,
 };
 
 enum sec_battery_usb_conf {
@@ -915,10 +916,13 @@ struct sec_battery_platform_data {
 	battery_health_condition* health_condition;
 
 	int siop_input_limit_current;
+	int siop_input_limit_current_siop20;
 	int siop_charging_limit_current;
 	int siop_hv_input_limit_current;
+	int siop_hv_input_limit_current_siop20;
 	int siop_hv_charging_limit_current;
 	int siop_hv_12v_input_limit_current;
+	int siop_hv_12v_input_limit_current_siop20;
 	int siop_hv_12v_charging_limit_current;
 
 	int siop_wireless_input_limit_current;

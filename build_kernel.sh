@@ -62,6 +62,7 @@ then
     printf "Building G960 Alternative\n"
 	make exynos9810-starlte_defconfig
 	sed -i 's/CONFIG_SECURITY_SELINUX_NEVER_ENFORCE=y/# CONFIG_SECURITY_SELINUX_NEVER_ENFORCE is not set/g' "$CUR_DIR"/.config
+	sed -i 's/CONFIG_HALL_NEW_NODE=y/# CONFIG_HALL_NEW_NODE is not set/g' "$CUR_DIR"/.config
 	make -j$(nproc --all)
 	cp -vr $CUR_DIR/arch/arm64/boot/Image $ZIP_ALT_DIR/Kernel/G960zImage
 	cp -vr $CUR_DIR/arch/arm64/boot/dtb.img $ZIP_ALT_DIR/Kernel/G960dtb.img
@@ -79,6 +80,7 @@ then
     printf "Building N960 Alternative\n"
 	make exynos9810-crownlte_defconfig
 	sed -i 's/CONFIG_SECURITY_SELINUX_NEVER_ENFORCE=y/# CONFIG_SECURITY_SELINUX_NEVER_ENFORCE is not set/g' "$CUR_DIR"/.config
+	sed -i 's/CONFIG_HALL_NEW_NODE=y/# CONFIG_HALL_NEW_NODE is not set/g' "$CUR_DIR"/.config
 	make -j$(nproc --all)
 	cp -vr $CUR_DIR/arch/arm64/boot/Image $ZIP_ALT_DIR/Kernel/N960zImage
 	cp -vr $CUR_DIR/arch/arm64/boot/dtb.img $ZIP_ALT_DIR/Kernel/N960dtb.img
@@ -97,6 +99,7 @@ then
 printf "Building G965 Alternative\n"
 make exynos9810-star2lte_defconfig
 sed -i 's/CONFIG_SECURITY_SELINUX_NEVER_ENFORCE=y/# CONFIG_SECURITY_SELINUX_NEVER_ENFORCE is not set/g' "$CUR_DIR"/.config
+sed -i 's/CONFIG_HALL_NEW_NODE=y/# CONFIG_HALL_NEW_NODE is not set/g' "$CUR_DIR"/.config
 make -j$(nproc --all)
 cp -vr $CUR_DIR/arch/arm64/boot/Image $ZIP_ALT_DIR/Kernel/G965zImage
 cp -vr $CUR_DIR/arch/arm64/boot/dtb.img $ZIP_ALT_DIR/Kernel/G965dtb.img

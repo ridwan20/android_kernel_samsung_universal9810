@@ -133,6 +133,7 @@ static const struct snd_kcontrol_new abox_effect_controls[] = {
 	DECLARE_ABOX_CTL_EQ_SWITCH("NXP RVB param data", NXPRVB_PARAM),
 	DECLARE_ABOX_CTL_EQ_SWITCH("SB rotation", SB),
 	DECLARE_ABOX_CTL_EQ_SWITCH("UPSCALER", UPSCALER),
+	DECLARE_ABOX_CTL_EQ_SWITCH("DA data", DA_DATA),
 };
 
 #define ABOX_EFFECT_ACCESSIABLE_REG(name, reg) \
@@ -153,7 +154,8 @@ static bool abox_effect_accessible_reg(struct device *dev, unsigned int reg)
 			ABOX_EFFECT_ACCESSIABLE_REG(NXPRVB_CTX, reg)	||
 			ABOX_EFFECT_ACCESSIABLE_REG(NXPRVB_PARAM, reg)	||
 			ABOX_EFFECT_ACCESSIABLE_REG(SB, reg)		||
-			ABOX_EFFECT_ACCESSIABLE_REG(UPSCALER, reg);
+			ABOX_EFFECT_ACCESSIABLE_REG(UPSCALER, reg)	||
+			ABOX_EFFECT_ACCESSIABLE_REG(DA_DATA, reg);
 }
 
 #define ABOX_EFFECT_VOLATILE_REG(name, reg) (reg == name##_BASE)
@@ -172,7 +174,8 @@ static bool abox_effect_volatile_reg(struct device *dev, unsigned int reg)
 			ABOX_EFFECT_VOLATILE_REG(NXPRVB_CTX, reg)	||
 			ABOX_EFFECT_VOLATILE_REG(NXPRVB_PARAM, reg)	||
 			ABOX_EFFECT_VOLATILE_REG(SB, reg)		||
-			ABOX_EFFECT_VOLATILE_REG(UPSCALER, reg);
+			ABOX_EFFECT_VOLATILE_REG(UPSCALER, reg) ||
+			ABOX_EFFECT_VOLATILE_REG(DA_DATA, reg);
 }
 
 static const struct regmap_config abox_effect_regmap_config = {
