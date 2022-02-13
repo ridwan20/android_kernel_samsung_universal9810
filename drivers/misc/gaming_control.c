@@ -28,7 +28,7 @@
 
 #define GAME_LIST_LENGTH 1024
 #define NUM_SUPPORTED_RUNNING_GAMES 20
-#define GAMING_CONTROL_VERSION "0.3"
+#define GAMING_CONTROL_VERSION "0.4"
 
 #define TASK_STARTED 1
 
@@ -52,6 +52,7 @@ int games_pid[NUM_SUPPORTED_RUNNING_GAMES] = {
 };
 static int nr_running_games = 0;
 static bool always_on = 0;
+static bool battery_idle = 0;
 bool gaming_mode;
 
 static void set_gaming_mode(bool mode)
@@ -98,6 +99,13 @@ static void set_gaming_mode(bool mode)
 		gpu_custom_min_clock(0);
 		gpu_custom_power_policy_set("coarse_demand");
 	}
+}
+
+bool battery_idle_gaming(void) {
+	if (gaming_mode && battery_idle)
+		return 1;
+
+	return 0;
 }
 
 static void store_game_pid(int pid)
@@ -228,6 +236,7 @@ static ssize_t type##_show(struct kobject *kobj,		\
 }								\
 
 show_value(always_on);
+show_value(battery_idle);
 show_value(min_mif_freq);
 show_value(min_little_freq);
 show_value(max_little_freq);
@@ -250,6 +259,7 @@ static ssize_t type##_store(struct kobject *kobj,				\
 }										\
 
 store_value(always_on);
+store_value(battery_idle);
 store_value(min_mif_freq);
 store_value(min_little_freq);
 store_value(max_little_freq);
@@ -272,6 +282,9 @@ static struct kobj_attribute version_attribute =
 	
 static struct kobj_attribute always_on_attribute =
 	__ATTR(always_on, 0644, always_on_show, always_on_store);
+	
+static struct kobj_attribute battery_idle_attribute =
+	__ATTR(battery_idle, 0644, battery_idle_show, battery_idle_store);
 
 static struct kobj_attribute min_mif_freq_attribute =
 	__ATTR(min_mif, 0644, min_mif_freq_show, min_mif_freq_store);
@@ -298,6 +311,7 @@ static struct attribute *gaming_control_attributes[] = {
 	&game_packages_attribute.attr,
 	&version_attribute.attr,
 	&always_on_attribute.attr,
+	&battery_idle_attribute.attr,
 	&min_mif_freq_attribute.attr,
 	&min_little_freq_attribute.attr,
 	&max_little_freq_attribute.attr,

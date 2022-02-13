@@ -40,9 +40,11 @@ int gpu_custom_max_clock(int gpu_max_clock);
 #ifdef CONFIG_GAMING_CONTROL
 extern void game_option(struct task_struct *tsk, enum game_opts opts);
 extern bool gaming_mode;
+extern bool battery_idle_gaming(void);
 #else
 static void game_option(struct task_struct *tsk, enum game_opts opts) {}
 static bool gaming_mode = 0;
+extern bool battery_idle_gaming(void) {return false;};
 #endif /* CONFIG_GAMING_CONTROL */
 
 #endif /* _GAMING_CONTROL_H_ */
