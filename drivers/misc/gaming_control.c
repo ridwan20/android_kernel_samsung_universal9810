@@ -91,13 +91,11 @@ static void set_gaming_mode(bool mode)
 		pm_qos_update_request(&gaming_control_max_big_qos, PM_QOS_CLUSTER1_FREQ_MAX_DEFAULT_VALUE);
 	
 	if(mode) {
-		gpu_custom_power_policy_set("always_on");
 		gpu_custom_max_clock(max_gpu_freq);
 		gpu_custom_min_clock(min_gpu_freq);
 	} else {
 		gpu_custom_max_clock(0);
 		gpu_custom_min_clock(0);
-		gpu_custom_power_policy_set("coarse_demand");
 	}
 }
 

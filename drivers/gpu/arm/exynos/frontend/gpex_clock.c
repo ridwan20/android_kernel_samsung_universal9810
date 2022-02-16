@@ -57,11 +57,6 @@ int gpu_custom_max_clock(int gpu_max_clock)
 	return gpu_max_clock_custom;
 }
 
-int gpu_custom_power_policy_set(const char *buf)
-{
-	return 0;
-}
-
 int gpex_clock_get_boot_clock()
 {
 	return clk_info.boot_clock;
